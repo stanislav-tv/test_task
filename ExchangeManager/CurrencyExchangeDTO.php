@@ -1,6 +1,6 @@
 <?php
 
-class CurrencyService
+class CurrencyExchangeDTO
 {
     private $amount;
     private $currencyFrom;
@@ -15,6 +15,7 @@ class CurrencyService
         }
         $this->date = $date;
         $this->amount = $amount;
+
     }
 
     /**
@@ -34,17 +35,17 @@ class CurrencyService
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDate()
+    public function getDate() : string
     {
         return $this->date;
     }
 
     /**
-     * @return mixed
+     * @return float
      */
-    public function getAmount()
+    public function getAmount() : float
     {
         return $this->amount;
     }

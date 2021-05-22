@@ -3,23 +3,14 @@
 
 class Rate
 {
-    private $id;
-    private $title;
-    private $rate;
-    private $currencyCode;
-    private $date;
+    protected $id;
+    protected $title;
+    protected $rate;
+    protected $currencyCode;
+    protected $date;
 
-    private $nbu;
-
-    public function __construct(NBUapi $nbu)
+    public function __construct(array $properties)
     {
-        $this->nbu = $nbu;
-        $this->parserProperties();
-    }
-
-    private function parserProperties()
-    {
-        $properties = $this->nbu->getRate();
         $this->id = $properties['r030'];
         $this->title = $properties['txt'];
         $this->rate = $properties['rate'];

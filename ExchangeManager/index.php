@@ -1,10 +1,17 @@
 <?php
 
-require_once 'Exchange.php';
+require_once 'CurrencyExchangeService.php';
+$curencyExchangeDTO = new CurrencyExchangeDTO($_REQUEST['amount'], $_REQUEST['currencyFrom'],
+    $_REQUEST['currencyTo'], $_REQUEST['date'] );
 
-$exchange = new Exchange($_REQUEST['amount'], $_REQUEST['currencyFrom'], $_REQUEST['currencyTo'], $_REQUEST['date'] );
+$rateList = new RateList($curencyExchangeDTO);
 
-echo $_REQUEST['amount'] .' '. $_REQUEST['currencyFrom'] . ' = ' .  $exchange->calculateExchange() . ' ' .$_REQUEST['currencyTo'];
+$exchangeService = new CurrencyExchangeService();
+
+
+echo $_REQUEST['amount'] .' '. $_REQUEST['currencyFrom'] . ' = ' .
+    $exchangeService->calculateExchange($curencyExchangeDTO, $rateList) .
+    ' ' .$_REQUEST['currencyTo'];
 
 
 

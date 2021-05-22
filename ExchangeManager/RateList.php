@@ -1,54 +1,55 @@
 <?php
 
-require_once 'Rate.php';
+require_once 'CurrencyExchangeDTO.php';
 require_once 'NBUapi.php';
+require_once 'NBUapiService.php';
+require_once 'RateNullObject.php';
 
 class RateList
 {
-    private $currencyService;
-    private $rateTo = NULL;
+    private $rateTo ;
     private $rateFrom;
 
-    public function __construct(CurrencyService $currencyService)
+    public function __construct(
+        CurrencyExchangeDTO $currencyExchangeDTO
+    )
     {
-        $this->currencyService = $currencyService;
-        $this->generateRateList();
+        $this->build($currencyExchangeDTO);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRateFrom()
+    public function getRateFrom() : float
     {
-        return $this->rateFrom;
+        return $this->rateFrom->getRate();
     }
 
-    public function getRateTo()
+    public function getRateTo() : float
     {
-        return $this->rateTo;
+        return $this->rateTo->getRate();
     }
 
-    private function generateRateList()
-    {
 
-        if ($this->isCurrencyToUAH()){
-            $this->rateFrom = (new Rate(new NBUapi($this->currencyService->getCurrencyFrom(), $this->currencyService->getDate())))->getRate();
+    private function build(CurrencyExchangeDTO $currencyExchangeDTO)
+    {
+        $nbu = new NBUapi();
+        $NBUapiService = new NBUapiService();
+
+        $this->rateFrom = $NBUapiService->getRateFrom($currencyExchangeDTO, $nbu);
+
+        if ($this->isCurrencyToUAH($currencyExchangeDTO->getCurrencyTo())){
+            $rateNull = new RateNullObject();
+            $rateNull->setNullRate();
+            $this->rateTo = $rateNull;
         }else{
-            $this->rateFrom = (new Rate(new NBUapi($this->currencyService->getCurrencyFrom(), $this->currencyService->getDate())))->getRate();
-            $this->rateTo = (new Rate(new NBUapi($this->currencyService->getCurrencyTo(), $this->currencyService->getDate())))->getRate();
-
+            $this->rateTo = $NBUapiService->getRateTo($currencyExchangeDTO, $nbu);
         }
     }
 
-    private function isCurrencyToUAH() : bool
+    private function isCurrencyToUAH(string $checkCurrency) : bool
     {
-
-        if ($this->currencyService->getCurrencyTo() == 'UAH'){
+        if ($checkCurrency == 'UAH'){
             return true;
         }else{
             return false;
         }
     }
-
-
 }
